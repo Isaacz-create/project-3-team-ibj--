@@ -50,23 +50,23 @@ Isaac
 **Example Mood Prompts**
 Try typing in moods like:
 
--Happy
--Romantic
--Melancholy
--Adventurous
--Nostalgic
--Curious
+- Happy
+- Romantic
+- Melancholy
+- Adventurous
+- Nostalgic
+- Curious
 
 **Sample Output**
 For the mood "adventurous", the app might return:
 
--Indiana Jones and the Last Crusade
--The Revenant
--Mad Max: Fury Road
+- Indiana Jones and the Last Crusade
+- The Revenant
+- Mad Max: Fury Road
 
 **Tech Used**
--Python
--Gradio
--TMDB API
--Requests
--Dotenv
+- Python
+- Gradio
+- TMDB API
+- Requests
+- Dotenv

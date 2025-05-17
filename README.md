@@ -40,7 +40,7 @@ python app.py
 Gradio will start a local server and provide a public link if share=True.
 
 🔗 Live Gradio App Link
-👉 [Click here to open the app](https://e7b6dded4702e6a505.gradio.live)
+👉 [Click here to open the app]( https://b150079f4042ea83c4.gradio.live)
 
 **Group Members**
 Jahmar Lawrence

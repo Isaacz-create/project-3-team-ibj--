@@ -19,7 +19,7 @@ MOOD_TO_MOVIE_IDS = {
     "mystery":     [274, 155, 807, 614, 345, 862, 915],
 }
 
-# ────────── helpers ───────────────────────────────────────────────────────
+# fetch data
 def fetch_movie_details(mid:int)->dict|None:
     url = f"https://api.themoviedb.org/3/movie/{mid}"
     r   = requests.get(url, params={"api_key": TMDB_API_KEY, "language": "en-US"})
@@ -52,7 +52,7 @@ async def recommend(mood:str)->str:
     movies  = await asyncio.gather(*[loop.run_in_executor(None, fetch_movie_details, i) for i in ids])
     movies  = [m for m in movies if m]
     if not movies:
-        return "⚠️ Could not fetch movie data."
+        return " Could not fetch movie data."
 
     ai_text = await loop.run_in_executor(None, generate_ai_description, mood, movies)
 
@@ -66,8 +66,8 @@ async def recommend(mood:str)->str:
 
 # ────────── Gradio UI with loading placeholder ────────────────────────────
 with gr.Blocks(title="Mood‑Based Movie Recommender") as demo:
-    gr.Markdown("## 🎬 Mood‑Based Movie Recommender\nEnter a mood to get three AI‑curated films.")
-    mood_input = gr.Textbox(label="How are you feeling? (e.g. happy, sad…)")
+    gr.Markdown("##  Mood‑Based Movie Recommender\nEnter a mood to get three AI‑curated films.")
+    mood_input = gr.Textbox(label="Enter a mood like happy, sad, adventurous, romantic, nostalgic, or mystery to get personalized movie recommendations.")
     go_button  = gr.Button("Get Recommendations")
     output_md  = gr.Markdown()
 

@@ -66,8 +66,8 @@ async def recommend(mood:str)->str:
 
 # ────────── Gradio UI with loading placeholder ────────────────────────────
 with gr.Blocks(title="Mood‑Based Movie Recommender") as demo:
-    gr.Markdown("## 🎬 Mood‑Based Movie Recommender\nEnter a mood to get three AI‑curated films.")
-    mood_input = gr.Textbox(label="How are you feeling? (e.g. happy, sad…)")
+    gr.Markdown("## Mood‑Based Movie Recommender\nEnter a mood to get three AI‑curated films.")
+    mood_input = gr.Textbox(label="Enter a mood like happy, sad, adventurous, romantic, nostalgic, or mystery to get personalized movie recommendations.")
     go_button  = gr.Button("Get Recommendations")
     output_md  = gr.Markdown()
 

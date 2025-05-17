@@ -14,16 +14,16 @@ it offers personalized movie suggestions with titles, overviews, and poster imag
 **Setup Guide**
 
 1. **Clone the Repository**
+   Clone the repository into the folder you created using git bash, then change the directory to project-3-team-ibj-- 
    ```bash
-   git clone https://github.com/your-username/mood-movie-recommender.git
-   cd mood-movie-recommender
+   git clone https://github.com/Isaacz-create/project-3-team-ibj--.git
+   cd project-3-team-ibj--
 
-2. **Install the Required Libraries**
+3. **Install the Required Libraries**
 
 bash
 Copy
 Edit
-pip install -r requirements.txt
 Create a .env File in the Root Directory
 Add your TMDB API key like this:
 

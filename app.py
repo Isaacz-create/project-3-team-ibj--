@@ -11,9 +11,9 @@ TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 OLLAMA_MODEL = "llama3:8b"          
 
 MOOD_TO_MOVIE_IDS = {
-    "happy":       [13, 550, 278, 680, 105, 12, 293660],
+    "happy":       [552524, 315162, 13, 447365, 787699, 105, 12, 293660],
     "sad":         [424, 500, 578, 597, 807, 497, 266],
-    "adventurous": [122, 98, 140607, 22, 120, 8587, 177572],
+    "adventurous": [950387, 986056, 140607, 575265, 1011985, 693134, 177572, 346698, 11, 330459, 862],
     "romantic":    [1252309, 1064213, 950396, 372058, 1226406, 12244, 8966, 1323784, 937287, 402431],
     "nostalgic":   [11, 85, 9615, 11324, 100, 101, 581],
     "mystery":     [574475, 974576, 419430, 414906, 882598, 458723, 423108, 1029880, 516632, 10528],
@@ -45,7 +45,7 @@ def generate_ai_description(mood:str, movies:list[dict]) -> str:
 async def recommend(mood:str)->str:
     mood = mood.lower().strip()
     if mood not in MOOD_TO_MOVIE_IDS:
-        return f"❌ Mood not found. Try one of: {', '.join(MOOD_TO_MOVIE_IDS.keys())}"
+        return f" Mood not found. Try one of: {', '.join(MOOD_TO_MOVIE_IDS.keys())}"
 
     ids     = random.sample(MOOD_TO_MOVIE_IDS[mood], 3)
     loop    = asyncio.get_event_loop()
@@ -56,9 +56,9 @@ async def recommend(mood:str)->str:
 
     ai_text = await loop.run_in_executor(None, generate_ai_description, mood, movies)
 
-    md = f"## 🧠 AI Insight for *{mood.title()}*\n\n{ai_text}\n\n---\n"
+    md = f"## AI Insight for *{mood.title()}*\n\n{ai_text}\n\n---\n"
     for m in movies:
-        md += f"### 🎬 {m['title']}\n{m['overview']}\n"
+        md += f"### {m['title']}\n{m['overview']}\n"
         if m['poster']:
             md += f"![Poster]({m['poster']})\n"
         md += "---\n"
@@ -72,7 +72,7 @@ with gr.Blocks(title="Mood‑Based Movie Recommender") as demo:
     output_md  = gr.Markdown()
 
     # 1) show loading msg instantly  2) then async generate real content
-    go_button.click(lambda _:"⏳ Generating recommendations…", inputs=mood_input, outputs=output_md)\
+    go_button.click(lambda _:" Generating recommendations…", inputs=mood_input, outputs=output_md)\
              .then(recommend, inputs=mood_input, outputs=output_md)
 
 demo.launch(share=True)   

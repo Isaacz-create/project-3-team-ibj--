@@ -35,8 +35,8 @@ If ```share=True ``` is set in your Gradio app, it will start a local server and
 [Click here to open the app](https://cb39c8fa04527f8f5d.gradio.live)
 
 **Group Members**:
-Jahmar Lawrence
-Brian
+Jahmar Lawrence,
+Brian,
 Isaac
 
 **Example Mood Prompts**

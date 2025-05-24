@@ -1,3 +1,9 @@
+---
+title: Mood_Movie_Based_Recommender
+app_file: app.py
+sdk: gradio
+sdk_version: 5.29.1
+---
 **Mood-Based Movie Recommender**
 
 This AI-enhanced web app recommends movies based on your current mood. Using real-time data from the TMDB API and natural-language generation (optional), 
@@ -40,7 +46,7 @@ python app.py
 Gradio will start a local server and provide a public link if share=True.
 
 🔗 Live Gradio App Link
-👉 [Click here to open the app](https://7f98d122249edda541.gradio.live)
+👉 [Click here to open the app](https://cb39c8fa04527f8f5d.gradio.live)
 
 **Group Members**
 Jahmar Lawrence

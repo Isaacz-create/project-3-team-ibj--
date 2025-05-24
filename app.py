@@ -1,23 +1,22 @@
 import os
-import random
 import requests
+import random
 import gradio as gr
-import ollama
 from dotenv import load_dotenv
+import ollama
 
-# load environment variables
+# Load environment variables
 load_dotenv()
 
-# Get API Key from environment
-TMDB_API_KEY  = os.getenv("TMDB_API_KEY")
+# API Key and configuration
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 if not TMDB_API_KEY:
-   print("WARNING: TMBD_API_KEY not found in environment variables.")
-   print("Please create a .env file with your API key")
+    print("Warning: TMDB_API_KEY not found. Please check your .env file.")
 
-OLLAMA_MODEL  = "tinyllama"
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
+OLLAMA_MODEL = "tinyllama"
 
-# Movie IDS that correlate to these moods, from the TMDB movie API
+# Movies categorized by moods (TMDB IDs)
 MOOD_TO_MOVIE_IDS = {
     "happy":       [552524, 315162, 13, 447365, 787699, 105, 12, 293660],
     "sad":         [424, 500, 578, 597, 807, 497, 266],
@@ -27,125 +26,100 @@ MOOD_TO_MOVIE_IDS = {
     "mystery":     [574475, 974576, 419430, 414906, 882598, 458723, 423108, 1029880, 516632, 10528],
 }
 
-# check to see if tinyllama is responding
+# Check Ollama availability
 def check_ollama_availability():
-    """
-    Returns True if the tinyllama model responds; False otherwise.
-    """
     try:
         response = requests.post(
             "http://localhost:11434/api/generate",
-            json={
-                "model": OLLAMA_MODEL, 
-                "prompt": "hello", 
-                "stream": False
-                },  
+            json={"model": OLLAMA_MODEL, "prompt": "hello", "stream": False},
         )
         return response.status_code == 200
-    except Exception:
+    except:
         return False
 
-# This function fetches movie data from TMDB API
-def fetch_movie_data(movie_id: int) -> dict | None:
-    """
-    Query TMDB for a single movie. Returns minimal dict or None on failure.
-    """
+# Fetch movie data from TMDB
+def fetch_movie_data(movie_id: int):
+    url = f"{TMDB_BASE_URL}/movie/{movie_id}"
+    params = {"api_key": TMDB_API_KEY, "language": "en-US"}
     try:
-        response = requests.get(
-            f"{TMDB_BASE_URL}/movie/{movie_id}",
-            params={
-                "api_key": TMDB_API_KEY, 
-                "language": "en-US"
-                },
-        )
-        if not response.ok:
+        response = requests.get(url, params=params)
+        if response.ok:
+            data = response.json()
+            return {
+                "title": data.get("title"),
+                "overview": data.get("overview"),
+                "poster": f"https://image.tmdb.org/t/p/w500{data.get('poster_path')}" if data.get("poster_path") else ""
+            }
+        else:
+            print(f"Error: {response.status_code} - {response.text}")
             return None
-        data = response.json()
-        return {
-            "title":    data["title"],
-            "overview": data["overview"],
-            "poster":   f"https://image.tmdb.org/t/p/w500{data['poster_path']}" if data.get("poster_path") else ""
-        }
-    except Exception:
+    except Exception as e:
+        print(f"Exception occurred: {e}")
         return None
 
-def generate_description(mood: str, movies: list[dict]) -> str:
-    """
-    Ask tinyllama to explain why the selected three movies fit the mood.
-    """
-    movie_block = "\n".join(
-        f"Title: {m['title']}\nOverview: {m['overview']}" for m in movies
-    )
-    prompt = (
-        f'A user is feeling "{mood}". Explain in a concise, engaging way why these '
-        f'three movies match the mood.\n\n{movie_block}'
-    )
+# Generate explanation using Ollama
+def generate_description(mood, movies):
+    prompt = f'A user is feeling "{mood}". Explain concisely why these three movies match their mood:\n'
+    for movie in movies:
+        prompt += f"\nTitle: {movie['title']}\nOverview: {movie['overview']}\n"
 
-    response = ollama.chat(
-        model=OLLAMA_MODEL,
-        messages=[{"role": "user", "content": prompt}],
-        stream=False
-    )
-    return response["message"]["content"]
+    try:
+        response = ollama.chat(
+            model=OLLAMA_MODEL,
+            messages=[{"role": "user", "content": prompt}],
+            stream=False
+        )
+        return response["message"]["content"]
+    except Exception as e:
+        print(f"Ollama Error: {e}")
+        return "Could not generate insight from Ollama."
 
+# Main recommendation function
+def movie_recommend(mood: str):
+    mood = mood.lower().strip()
 
-# Movie_recommend checks to the user inputted the moods provided to them, if not return an error message
-def movie_recommend(mood: str) -> str:
-    mood_key = mood.lower().strip()
-    if mood_key not in MOOD_TO_MOVIE_IDS:
-        return "Mood not found. Try one of: " + ", ".join(MOOD_TO_MOVIE_IDS.keys())
-    
-# Lets the user know that Tinyllama is not responding if the last argument was to fail
+    if mood not in MOOD_TO_MOVIE_IDS:
+        return f"Mood not found. Try one of: {', '.join(MOOD_TO_MOVIE_IDS.keys())}"
+
     if not check_ollama_availability():
-        return "The tinyllama model is not responding on Ollama. Please ensure it is running."
+        return "Tinyllama is not responding. Please ensure Ollama is running."
 
-# Depending on the mood the user chose, the list of movies selected for that mood is randomized
-# (hence the random module imported)
-# spit out 3 movies
-    selected_ids = random.sample(MOOD_TO_MOVIE_IDS[mood_key], 3)
-    movies = [fetch_movie_data(mid) for mid in selected_ids]
-    movies = [m for m in movies if m]
+    selected_ids = random.sample(MOOD_TO_MOVIE_IDS[mood], 3)
+    movies = [fetch_movie_data(mid) for mid in selected_ids if fetch_movie_data(mid)]
 
     if len(movies) < 3:
-        return "Could not retrieve movie data from TMDB."
+        return "Error fetching movie details from TMDB."
 
-    summary = generate_description(mood_key, movies)
+    insight = generate_description(mood, movies)
 
-# Tinyllama generates insight based on the mood
+    markdown = f"## Movie Recommendations for {mood.title()} Mood\n\n"
+    markdown += f"### Insight\n{insight}\n\n---\n"
 
-    md = f"## Insight for {mood_key.title()}\n\n{summary}\n\n---\n"
-    for m in movies:
-        md += f"### {m['title']}\n{m['overview']}\n"
-        if m['poster']:
-            md += f"![Poster]({m['poster']})\n"
-        md += "---\n"
-    return md
+    for movie in movies:
+        markdown += f"### {movie['title']}\n{movie['overview']}\n"
+        if movie["poster"]:
+            markdown += f"![Poster]({movie['poster']})\n"
+        markdown += "---\n"
 
+    return markdown
 
-#This is the Gradio User Interface (UI)
-with gr.Blocks(title="Mood‑Based Movie Recommender") as demo:
-    gr.Markdown("## Mood‑Based Movie Recommender\nSelect or type a mood to get three curated films.")
-
-#This provides a dropdown menu with all the moods
+# Gradio UI
+with gr.Blocks(title="Mood-Based Movie Recommender") as demo:
+    gr.Markdown("# 🎬 Mood-Based Movie Recommender")
     mood_input = gr.Dropdown(
         choices=list(MOOD_TO_MOVIE_IDS.keys()),
-        label="Mood",
+        label="Select Your Mood",
         value="happy",
-        allow_custom_value=True            # But this allows the user to type manually if they so choose
+        allow_custom_value=True
     )
-    go_button = gr.Button("Get Recommendations")
-    output_md = gr.Markdown()
+    submit_button = gr.Button("Get Recommendations")
+    output_markdown = gr.Markdown()
 
-    # This is a placeholder or a "loading bar", that visually shows the data being generated in the UI
-    go_button.click(
-        lambda _:"Generating recommendations…",
+    submit_button.click(
+        fn=movie_recommend,
         inputs=mood_input,
-        outputs=output_md
-    ).then(
-        movie_recommend,
-        inputs=mood_input,
-        outputs=output_md
+        outputs=output_markdown
     )
 
 if __name__ == "__main__":
-    demo.launch(share=True) # This creates shared link or public url where you can view the gradio app
+    demo.launch(share=True)

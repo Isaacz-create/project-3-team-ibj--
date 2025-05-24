@@ -1,9 +1,3 @@
----
-title: Mood_Movie_Based_Recommender
-app_file: app.py
-sdk: gradio
-sdk_version: 5.29.1
----
 **Mood-Based Movie Recommender**
 
 This AI-enhanced web app recommends movies based on your current mood. Using real-time data from the TMDB API and natural-language generation (optional), 

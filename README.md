@@ -39,8 +39,8 @@ Edit
 python app.py
 Gradio will start a local server and provide a public link if share=True.
 
-🔗 Live Gradio App Link
-👉 [Click here to open the app](https://cb39c8fa04527f8f5d.gradio.live)
+ Live Gradio App Link
+[Click here to open the app](https://cb39c8fa04527f8f5d.gradio.live)
 
 **Group Members**
 Jahmar Lawrence
@@ -52,10 +52,10 @@ Try typing in moods like:
 
 - Happy
 - Romantic
-- Melancholy
+- Mystery
 - Adventurous
 - Nostalgic
-- Curious
+- Sad
 
 **Sample Output**
 For the mood "adventurous", the app might return:
@@ -67,6 +67,7 @@ For the mood "adventurous", the app might return:
 **Tech Used**
 - Python
 - Gradio
+- Ollama
 - TMDB API
 - Requests
 - Dotenv

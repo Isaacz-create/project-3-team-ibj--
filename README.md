@@ -21,30 +21,22 @@ it offers personalized movie suggestions with titles, overviews, and poster imag
 
 3. **Install the Required Libraries**
 
-bash
-Copy
-Edit
-Create a .env File in the Root Directory
-Add your TMDB API key like this:
+Create a ```.env``` file in the root directory of your project.
 
-ini
-Copy
-Edit
-TMDB_API_KEY=your_api_key_here
-Run the App
+Add your TMDB API key to the file using the following format:
+```TMDB_API_KEY=your_api_key_here```
 
-bash
-Copy
-Edit
-python app.py
-Gradio will start a local server and provide a public link if share=True.
+Run the app using the following command:
+```python app.py```
 
-🔗 Live Gradio App Link
-👉 [Click here to open the app](https://7f98d122249edda541.gradio.live)
+If ```share=True ``` is set in your Gradio app, it will start a local server and provide a public link you can use to access the app from anywhere.
 
-**Group Members**
-Jahmar Lawrence
-Brian
+ Live Gradio App Link
+[Click here to open the app](https://cb39c8fa04527f8f5d.gradio.live)
+
+**Group Members**:
+Jahmar Lawrence,
+Brian,
 Isaac
 
 **Example Mood Prompts**
@@ -52,10 +44,10 @@ Try typing in moods like:
 
 - Happy
 - Romantic
-- Melancholy
+- Mystery
 - Adventurous
 - Nostalgic
-- Curious
+- Sad
 
 **Sample Output**
 For the mood "adventurous", the app might return:
@@ -67,6 +59,7 @@ For the mood "adventurous", the app might return:
 **Tech Used**
 - Python
 - Gradio
+- Ollama
 - TMDB API
 - Requests
 - Dotenv
